@@ -1,0 +1,8 @@
+.board {
+    display: flex;
+    flex-wrap: wrap;
+    width: calc(140px * 4);
+    height: calc(140px* 4);
+    background-color: #ffecc2;
+    margin: 50px auto;
+}

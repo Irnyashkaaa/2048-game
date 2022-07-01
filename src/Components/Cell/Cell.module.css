@@ -1,0 +1,43 @@
+.cell {
+    width: 132px;
+    height: 132px;
+    background-color: #282c34;
+    border-radius: 10px;
+    margin: 4px;
+}
+
+.cell2 {
+    background-color: #ffd1b9;
+}
+.cell4 {
+    background-color: #ffc1a6;
+}
+.cell8 {
+    background-color: #ffb08e;
+}
+.cell16 {
+    background-color: #ffa17d;
+}
+.cell32 {
+    background-color: #ff9981;
+}
+.cell64 {
+    background-color: #ff8473;
+}
+.cell128 {
+    background-color: #ff705e;
+}
+.cell256 {
+    background-color: #ff5956;
+}
+.cell512 {
+    background-color: #ff443c;
+}
+.cell1024 {
+    background-color: #ff2f2c;
+}
+.cell2048 {
+    background-color: #ff0e09;
+}
+
+
