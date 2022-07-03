@@ -11,7 +11,7 @@ export const Board: React.FC<propsType> = ({cells, setCells}) => {
     return (
         <div className={s.board}>
             {cells.map(cell => {
-                return <Cell cell={cell} />
+                return <Cell key={cell.id} cell={cell} />
             })}
         </div>
     )
