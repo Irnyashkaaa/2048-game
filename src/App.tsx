@@ -32,66 +32,104 @@ const App = () => {
         {y: 3, x: 3, id: 15, number: null},
     ]
 
-    const [cells, setCells] = useState<any>(initCells)
+    const [cells, setCells] = useState<any>(() => initCells)
     const [game, setGame] = useState<boolean>(false)
 
+    //cell move up
     useKeypress('w', () => {
+        let copyCells = structuredClone(cells)
+        let k = 0
         cells.map((cell: cellsType) => {
             if (cell.number && cell.y !== 0) {
                 const y = cell.y - 1
                 let i = 0
                 cells.map((c: cellsType) => {
+                    if (c.x === cell.x && !c.number) { //if cell above the current cell is empty}
+                        if (c.y === y || c.y === y - 1 || c.y === y - 2) {
+                            copyCells[i].number = copyCells[k].number
+                            copyCells[k].number = null
+                        }
+                    }
+                    setCells(copyCells)
                     i++
-                    if (c.x === cell.x && c.y === y && !c.number) { //if cell above the current cell is empty
-                        alert ('up')
-                    }
-                })
-
-            }
-
-
-        })
-    });
-    useKeypress('s', () => {
-        cells.map((cell: cellsType) => {
-            if (cell.number && cell.y !== 3) {
-                const y = cell.y + 1
-                cells.map((c: cellsType) => {
-                    if (c.x === cell.x && c.y === y && !c.number) {
-                        alert ('down')
-                    }
                 })
             }
+            k++
         })
-
     })
+    //cell move left
     useKeypress('a', () => {
+        const copyCells = structuredClone(cells)
+        let k = 0
         cells.map((cell: cellsType) => {
             if (cell.number && cell.x !== 0) {
                 const x = cell.x - 1
+                let i = 0
                 cells.map((c: cellsType) => {
-                    if (c.x === x && c.y === cell.y && !c.number) {
-                        alert('left')
+                    if (c.y === cell.y && !c.number) {
+                        if (c.x === x || c.x === x -1 || c.x === x - 2) {
+                            copyCells[i].number = copyCells[k].number
+                            copyCells[k].number = null
+                        }
                     }
+                    setCells(copyCells)
+                    i++
                 })
             }
+            k++
         })
     })
+    //cell move down
+    useKeypress('s', () => {
+        const copyCells = structuredClone(cells)
+        let k = 15
+        cells.reverse()
+        cells.map((cell: cellsType) => {
+            if (cell.number && cell.y !== 3) {
+                const y = cell.y + 1
+                let i = 15
+                cells.map((c: cellsType) => {
+                    if (c.x === cell.x && !c.number ) {
+                        if (c.y == y || c.y === y+1 || c.y === y+2) {
+                            copyCells[i].number = copyCells[k].number
+                            copyCells[k].number = null
+                        }
+                    }
+                    setCells(copyCells)
+                    i--
+                })
+            }
+            k--
+        })
+        cells.reverse()
+    })
+    //cell move right
     useKeypress('d', () => {
+        const copyCells = structuredClone(cells)
+        let k = 15
+        cells.reverse()
         cells.map((cell: cellsType) => {
             if (cell.number && cell.x !== 3) {
                 const x = cell.x + 1
+                let i = 15
                 cells.map((c: cellsType) => {
-                    if (c.x === x && c.y === cell.y && !c.number) {
-                        alert('right')
+                    if (c.y === cell.y && !c.number) {
+                        if (c.x === x || c.x === x + 1 || c.x === x+2) {
+                            copyCells[i].number = copyCells[k].number
+                            copyCells[k].number = null
+                        }
                     }
+                    setCells(copyCells)
+                    i--
                 })
             }
+            k--
         })
+        cells.reverse()
     })
 
     useEffect(() => {
-        const randomNumber = Math.round(Math.random()* cells.length)
+        const randomNumber = Math.round(Math.random() * cells.length)
         // @ts-ignore
         setCells(cells, cells[randomNumber].number = 2)
     }, [])
