@@ -36,8 +36,9 @@ const App = () => {
     const [game, setGame] = useState<boolean>(false)
 
     //cell move up
+    let copyCells = structuredClone(cells)
     useKeypress('w', () => {
-        let copyCells = structuredClone(cells)
+
         let k = 0
         cells.map((cell: cellsType) => {
             if (cell.number && cell.y !== 0) {
@@ -50,16 +51,15 @@ const App = () => {
                             copyCells[k].number = null
                         }
                     }
-                    setCells(copyCells)
                     i++
                 })
             }
             k++
         })
+        addNewCell(copyCells)
     })
     //cell move left
     useKeypress('a', () => {
-        const copyCells = structuredClone(cells)
         let k = 0
         cells.map((cell: cellsType) => {
             if (cell.number && cell.x !== 0) {
@@ -72,16 +72,15 @@ const App = () => {
                             copyCells[k].number = null
                         }
                     }
-                    setCells(copyCells)
                     i++
                 })
             }
             k++
         })
+        addNewCell(copyCells)
     })
     //cell move down
     useKeypress('s', () => {
-        const copyCells = structuredClone(cells)
         let k = 15
         cells.reverse()
         cells.map((cell: cellsType) => {
@@ -95,17 +94,16 @@ const App = () => {
                             copyCells[k].number = null
                         }
                     }
-                    setCells(copyCells)
                     i--
                 })
             }
             k--
         })
+        addNewCell(copyCells)
         cells.reverse()
     })
     //cell move right
     useKeypress('d', () => {
-        const copyCells = structuredClone(cells)
         let k = 15
         cells.reverse()
         cells.map((cell: cellsType) => {
@@ -119,12 +117,12 @@ const App = () => {
                             copyCells[k].number = null
                         }
                     }
-                    setCells(copyCells)
                     i--
                 })
             }
             k--
         })
+        addNewCell(copyCells)
         cells.reverse()
     })
 
@@ -133,6 +131,15 @@ const App = () => {
         // @ts-ignore
         setCells(cells, cells[randomNumber].number = 2)
     }, [])
+    const addNewCell = (copyCells: cellsType[]) => {
+        const randomNumber = Math.round(Math.random() * cells.length)
+        if (copyCells[randomNumber].number) {
+            addNewCell(copyCells)
+        } else {
+            copyCells[randomNumber].number = 2
+            setCells(copyCells)
+        }
+    }
   return (
     <div className="App">
         {!game && <button onClick={() => setGame(true)}>start</button>}
