@@ -11,7 +11,7 @@ export const Cell: React.FC<propsType> = ({cell}) => {
 
     return (
         <div className={`${s.cell} ${s[`cell${cell.number}`]}`}>
-            {cell.number}
+            {cell.number === 0? '': cell.number}
         </div>
     )
 }
