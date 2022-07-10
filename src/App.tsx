@@ -3,6 +3,7 @@ import './App.css';
 import {Board} from "./Components/Board/Board";
 // @ts-ignore
 import useKeypress from "react-use-keypress"
+import {Simulate} from "react-dom/test-utils";
 
 export type cellsType = {
     number: number | null
@@ -15,18 +16,18 @@ const App = () => {
 
     const initCells = [
         {y: 0, x: 0, id: 0, number: 2},
-        {y: 0, x: 1, id: 1, number: null},
+        {y: 0, x: 1, id: 1, number: 2},
         {y: 0, x: 2, id: 2, number: null},
-        {y: 0, x: 3, id: 3, number: null},
+        {y: 0, x: 3, id: 3, number: 2},
         {y: 1, x: 0, id: 4, number: null},
         {y: 1, x: 1, id: 5, number: null},
         {y: 1, x: 2, id: 6, number: null},
         {y: 1, x: 3, id: 7, number: null},
-        {y: 2, x: 0, id: 8, number: 2},
+        {y: 2, x: 0, id: 8, number: null},
         {y: 2, x: 1, id: 9, number: null},
         {y: 2, x: 2, id: 10, number: null},
         {y: 2, x: 3, id: 11, number: null},
-        {y: 3, x: 0, id: 12, number: 2},
+        {y: 3, x: 0, id: 12, number: null},
         {y: 3, x: 1, id: 13, number: null},
         {y: 3, x: 2, id: 14, number: null},
         {y: 3, x: 3, id: 15, number: null},
@@ -90,7 +91,15 @@ const App = () => {
                     } else {
                         copyCells[k+4].number = null
                     }
-                }else if (cell.number && cell.y !== 0) {
+                } else if (copyCells[k + 3] && copyCells[k + 3].y === cell.y
+                && copyCells[k + 3].number === copyCells[k + 2].number
+                && copyCells[k + 2].number === copyCells[k + 1].number
+                    && copyCells[k + 1].number === copyCells[k].number
+                ) {
+                    copyCells[k].number *= 2
+                    copyCells[k + 1].number = copyCells[k].number
+                    copyCells[k + 2].number = copyCells[k + 3].number = null
+                } else if (cell.number && cell.y !== 0) {
                     const y = cell.y - 1
                     let i = 0
                     cells.map((c: cellsType) => {
@@ -118,19 +127,78 @@ const App = () => {
     useKeypress('a', () => {
         let k = 0
         cells.map((cell: cellsType) => {
-            if (cell.number && cell.x !== 0) {
-                const x = cell.x - 1
-                let i = 0
-                cells.map((c: cellsType) => {
-                    if (c.y === cell.y && !c.number) {
-                        if (c.x === x || c.x === x -1 || c.x === x - 2) {
-                            copyCells[i].number = copyCells[k].number
-                            copyCells[k].number = null
+            if (cell.number) {// chose cell with number index = k
+                if (copyCells[k + 1] && copyCells[k + 1].number === cell.number) {
+                    if (copyCells[k - 2] && !copyCells[k -2].number && !copyCells[k - 1].number) {
+                        copyCells[k - 2].number = cell.number * 2
+                        copyCells[k - 1].number = null
+                        copyCells[k].number = null
+                        copyCells[k + 1].number = null
+
+                    } else if (copyCells[k - 1] && !copyCells[k - 1].number) {
+                        copyCells[k - 1].number = cells[k].number * 2
+                        if (copyCells[k + 2] && copyCells[k + 2].y === cell.y) {
+                            copyCells[k].number = copyCells[k + 2].number
+                            copyCells[k + 2].number = null
+                            copyCells[k + 1].number = null
+                        } else {
+                            copyCells[k + 1].number = null
+                            copyCells[k].number = 10
+                        }
+                    } else {
+                        copyCells[k].number *= 2
+                        if (copyCells[k + 3] && copyCells[k + 3].y === cell.y) {
+                            copyCells[k + 1].number = copyCells[k + 2].number
+                            copyCells[k + 2].number = copyCells[k + 3].number
+                            copyCells[k + 3].number = null
+                        }else if (copyCells[k + 2] && copyCells[k + 2].y === cell.y) {
+                            copyCells[k + 1].number = copyCells[k + 2].number
+                            copyCells[k + 2].number = null
+                        } else {
+                            copyCells[k + 1].number = null
                         }
                     }
-                    i++
-                })
+                } else if (copyCells[k + 2] && copyCells[k + 2].y === cell.y
+                    && !copyCells[k + 1].number && copyCells[k + 2].number === cell.number) {
+                    if (copyCells[k + 3] && copyCells[k + 3].y === cell.y) {
+                        copyCells[k].number *= 2
+                        copyCells[k + 1].number = copyCells[k + 3].number
+                    } else if (copyCells[k - 1] && !copyCells[k - 1].number) {
+                        copyCells[k - 1].number = cell.number * 2
+                        copyCells[k].number = null
+                        copyCells[k + 2].number = null
+                    } else {
+                        copyCells[k].number *= 2
+                        copyCells[k + 2].number = null
+                    }
+                } else if (copyCells[k + 3]) {
+                    console.log(copyCells[k].number)
+                }  else if (copyCells[k + 3] && copyCells[k + 3].y === cell.y
+                && copyCells[k + 3].number === cell.number
+                && !copyCells[k + 1].number && !copyCells[k + 2].number) {
+                    copyCells[k].number *=2
+                    copyCells[k + 3].number = null
+                } else if (cell.number && cell.x !== 0) {
+                    const x = cell.x - 1
+                    let i = 0
+                    cells.map((c: cellsType) => {
+                        if (c.y === cell.y && !c.number) {
+                            if (c.x === x ) {
+                                copyCells[i].number = copyCells[k].number
+                                copyCells[k].number = null
+                            } else if (c.x === x - 1 && !copyCells[k-1].number) {
+                                copyCells[i].number = copyCells[k].number
+                                copyCells[k].number = null
+                            } else if (c.x === x - 2 && !cells[k-1].number && !cells[k-2].number) {
+                                copyCells[i].number = copyCells[k].number
+                                copyCells[k].number = null
+                            }
+                        }
+                        i++
+                    })
+                }
             }
+
             k++
         })
         addNewCell(copyCells)
