@@ -16,7 +16,7 @@ const App = () => {
 
     const initCells = [
         {y: 0, x: 0, id: 0, number: 2},
-        {y: 0, x: 1, id: 1, number: 2},
+        {y: 0, x: 1, id: 1, number: null},
         {y: 0, x: 2, id: 2, number: null},
         {y: 0, x: 3, id: 3, number: 2},
         {y: 1, x: 0, id: 4, number: null},
@@ -128,42 +128,56 @@ const App = () => {
         let k = 0
         cells.map((cell: cellsType) => {
             if (cell.number) {// chose cell with number index = k
-                if (copyCells[k + 1] && copyCells[k + 1].number === cell.number) {
-                    if (copyCells[k - 2] && !copyCells[k -2].number && !copyCells[k - 1].number) {
-                        copyCells[k - 2].number = cell.number * 2
-                        copyCells[k - 1].number = null
-                        copyCells[k].number = null
-                        copyCells[k + 1].number = null
+                if (cells[k + 3] && cells[k + 3].y === cells[k].y
+                && !cells[k + 1].number && cells[k].number === cells[k + 2].number
+                && cells[k].number === cells[k + 3].number) {
+                    copyCells[k + 1].number = cells[k].number
+                    copyCells[k + 2].number = null
+                    copyCells[k].number *= 2
+                    return copyCells
+                } else if (cells[k + 3] && cells[k + 3].y === cells[k].y
+                    && cells[k + 3].number === cell.number
+                    && cells[k + 1].number === cells[k + 3].number
+                    && !cells[k + 2].number
+                ) {
+                    copyCells[k + 1].number = copyCells[k].number / 2
+                    copyCells[k].number *= 2
+                } else if (copyCells[k + 1] && copyCells[k + 1].number === cell.number) {
+                   if (cells[k - 2] && !cells[k -2].number && !cells[k - 1].number) {
+                        cells[k - 2].number = cell.number * 2
+                        cells[k - 1].number = null
+                        cells[k].number = null
+                        cells[k + 1].number = null
 
-                    } else if (copyCells[k - 1] && !copyCells[k - 1].number) {
-                        copyCells[k - 1].number = cells[k].number * 2
-                        if (copyCells[k + 2] && copyCells[k + 2].y === cell.y) {
-                            copyCells[k].number = copyCells[k + 2].number
-                            copyCells[k + 2].number = null
-                            copyCells[k + 1].number = null
+                    } else if (cells[k - 1] && !cells[k - 1].number) {
+                        cells[k - 1].number = cells[k].number * 2
+                        if (cells[k + 2] && cells[k + 2].y === cell.y) {
+                            cells[k].number = cells[k + 2].number
+                            cells[k + 2].number = null
+                            cells[k + 1].number = null
                         } else {
                             copyCells[k + 1].number = null
                             copyCells[k].number = 10
                         }
                     } else {
                         copyCells[k].number *= 2
-                        if (copyCells[k + 3] && copyCells[k + 3].y === cell.y) {
-                            copyCells[k + 1].number = copyCells[k + 2].number
-                            copyCells[k + 2].number = copyCells[k + 3].number
-                            copyCells[k + 3].number = null
-                        }else if (copyCells[k + 2] && copyCells[k + 2].y === cell.y) {
+                        if (cells[k + 3] && cells[k + 3].y === cell.y) {
+                            cells[k + 1].number = cells[k + 2].number
+                            cells[k + 2].number = cells[k + 3].number
+                            cells[k + 3].number = null
+                        }else if (cells[k + 2] && cells[k + 2].y === cell.y) {
                             copyCells[k + 1].number = copyCells[k + 2].number
                             copyCells[k + 2].number = null
                         } else {
                             copyCells[k + 1].number = null
                         }
                     }
-                } else if (copyCells[k + 2] && copyCells[k + 2].y === cell.y
-                    && !copyCells[k + 1].number && copyCells[k + 2].number === cell.number) {
-                    if (copyCells[k + 3] && copyCells[k + 3].y === cell.y) {
+                } else if (cells[k + 2] && cells[k + 2].y === cell.y
+                    && !cells[k + 1].number && cells[k + 2].number === cell.number) {
+                    if (cells[k + 3] && cells[k + 3].y === cell.y) {
                         copyCells[k].number *= 2
                         copyCells[k + 1].number = copyCells[k + 3].number
-                    } else if (copyCells[k - 1] && !copyCells[k - 1].number) {
+                    } else if (cells[k - 1] && !cells[k - 1].number) {
                         copyCells[k - 1].number = cell.number * 2
                         copyCells[k].number = null
                         copyCells[k + 2].number = null
@@ -171,11 +185,9 @@ const App = () => {
                         copyCells[k].number *= 2
                         copyCells[k + 2].number = null
                     }
-                } else if (copyCells[k + 3]) {
-                    console.log(copyCells[k].number)
-                }  else if (copyCells[k + 3] && copyCells[k + 3].y === cell.y
-                && copyCells[k + 3].number === cell.number
-                && !copyCells[k + 1].number && !copyCells[k + 2].number) {
+                } else if (cells[k + 3] && cells[k + 3].y === cell.y
+                && cells[k + 3].number === cell.number
+                && !cells[k + 1].number && !cells[k + 2].number) {
                     copyCells[k].number *=2
                     copyCells[k + 3].number = null
                 } else if (cell.number && cell.x !== 0) {
@@ -186,7 +198,7 @@ const App = () => {
                             if (c.x === x ) {
                                 copyCells[i].number = copyCells[k].number
                                 copyCells[k].number = null
-                            } else if (c.x === x - 1 && !copyCells[k-1].number) {
+                            } else if (c.x === x - 1 && !cells[k-1].number) {
                                 copyCells[i].number = copyCells[k].number
                                 copyCells[k].number = null
                             } else if (c.x === x - 2 && !cells[k-1].number && !cells[k-2].number) {
@@ -213,8 +225,14 @@ const App = () => {
                 let i = 15
                 cells.map((c: cellsType) => {
                     if (c.x === cell.x && !c.number ) {
-                        if (c.y == y || c.y === y+1 || c.y === y+2) {
+                        if (c.y == y + 2 && !cells[k + 4].number && !cells[k + 8].number) {
                             copyCells[i].number = copyCells[k].number
+                            copyCells[k].number = null
+                        } else if (c.y === y + 1 && !cells[k + 4].number) {
+                            copyCells[i].number = copyCells[k].number
+                            copyCells[k].number = null
+                        } else if (c.y === y ) {
+                            copyCells[i].number = cells[k].number
                             copyCells[k].number = null
                         }
                     }
