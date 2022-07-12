@@ -16,19 +16,19 @@ const App = () => {
 
     const initCells = [
         {y: 0, x: 0, id: 0, number: 2},
-        {y: 0, x: 1, id: 1, number: null},
+        {y: 0, x: 1, id: 1, number: 2},
         {y: 0, x: 2, id: 2, number: null},
-        {y: 0, x: 3, id: 3, number: 2},
+        {y: 0, x: 3, id: 3, number: null},
         {y: 1, x: 0, id: 4, number: null},
-        {y: 1, x: 1, id: 5, number: null},
+        {y: 1, x: 1, id: 5, number: 2},
         {y: 1, x: 2, id: 6, number: null},
         {y: 1, x: 3, id: 7, number: null},
-        {y: 2, x: 0, id: 8, number: null},
+        {y: 2, x: 0, id: 8, number: 2},
         {y: 2, x: 1, id: 9, number: null},
         {y: 2, x: 2, id: 10, number: null},
         {y: 2, x: 3, id: 11, number: null},
-        {y: 3, x: 0, id: 12, number: null},
-        {y: 3, x: 1, id: 13, number: null},
+        {y: 3, x: 0, id: 12, number: 3},
+        {y: 3, x: 1, id: 13, number: 3},
         {y: 3, x: 2, id: 14, number: null},
         {y: 3, x: 3, id: 15, number: null},
     ]
@@ -43,7 +43,7 @@ const App = () => {
         let k = 0
         cells.map((cell: cellsType) => {
             if (cell.number) {
-                if (copyCells[k+4] && copyCells[k+8] && copyCells[k+12] &&
+                 if (copyCells[k+4] && copyCells[k+8] && copyCells[k+12] &&
                     copyCells[k+4].number === cell.number &&
                     copyCells[k+4].number === copyCells[k+8].number &&
                     copyCells[k+8].number === copyCells[k+12].number) {
@@ -100,23 +100,16 @@ const App = () => {
                     copyCells[k + 1].number = copyCells[k].number
                     copyCells[k + 2].number = copyCells[k + 3].number = null
                 } else if (cell.number && cell.y !== 0) {
-                    const y = cell.y - 1
-                    let i = 0
-                    cells.map((c: cellsType) => {
-                        if (c.x === cell.x && !c.number) { //if cell above the current cell is empty}
-                            if (c.y === y) {
-                                copyCells[i].number = copyCells[k].number
-                                copyCells[k].number = null
-                            } else if (c.y === y - 1 && !cells[k-4].number) {
-                                copyCells[i].number = copyCells[k].number
-                                copyCells[k].number = null
-                            } else if (c.y === y - 2 && !cells[k-4].number && !cells[k-8].number) {
-                                copyCells[i].number = copyCells[k].number
-                                copyCells[k].number = null
-                            }
-                        }
-                        i++
-                    })
+                    if (copyCells[k - 12] && !copyCells[k - 12].number && !copyCells[k - 8].number && !copyCells[k - 4].number) {
+                        copyCells[k - 12].number = copyCells[k].number
+                        copyCells[k].number = null
+                    } else if (copyCells[k - 8] && !copyCells[k - 8].number && !copyCells[k - 4].number) {
+                        copyCells[k - 8].number = copyCells[k].number
+                        copyCells[k].number = null
+                    } else if (!copyCells[k - 4].number) {
+                        copyCells[k - 4].number = copyCells[k].number
+                        copyCells[k].number = null
+                    }
                 }
             }
             k++
@@ -217,32 +210,120 @@ const App = () => {
     })
     //cell move down
     useKeypress('s', () => {
-        let k = 15
-        cells.reverse()
-        cells.map((cell: cellsType) => {
-            if (cell.number && cell.y !== 3) {
-                const y = cell.y + 1
-                let i = 15
-                cells.map((c: cellsType) => {
-                    if (c.x === cell.x && !c.number ) {
-                        if (c.y == y + 2 && !cells[k + 4].number && !cells[k + 8].number) {
-                            copyCells[i].number = copyCells[k].number
-                            copyCells[k].number = null
-                        } else if (c.y === y + 1 && !cells[k + 4].number) {
-                            copyCells[i].number = copyCells[k].number
-                            copyCells[k].number = null
-                        } else if (c.y === y ) {
-                            copyCells[i].number = cells[k].number
+        let k = 0
+        copyCells.map((cell: cellsType) => {
+            if (cell.number) {
+                if (copyCells[k + 12] && copyCells[k + 12].number === copyCells[k].number
+                    && copyCells[k + 4].number === copyCells[k].number
+                    && copyCells[k + 8].number === copyCells[k].number) {
+                    copyCells[k + 8].number *= 2
+                    copyCells[k + 12].number *= 2
+                    copyCells[k].number = copyCells[k + 4].number = null
+                } else if (copyCells[k + 8] && copyCells[k + 8].number === copyCells[k + 4].number
+                && copyCells[k + 4].number === copyCells[k].number) {
+                    if (copyCells[k + 12] ) {
+                        if ( !copyCells[k + 12].number) {
+                            copyCells[k + 12].number = copyCells[k].number * 2
+                            copyCells[k + 8].number = copyCells[k].number
+                            copyCells[k].number = copyCells[k + 4].number = null
+                        } else {
+                            copyCells[k + 8].number *= 2
                             copyCells[k].number = null
                         }
+                    } else {
+                        copyCells[k + 8].number *= 2
+                        copyCells[k].number = copyCells[k - 4].number
+                        copyCells[k - 4].number = null
                     }
-                    i--
-                })
+                } else if ((copyCells[k + 12] && copyCells[k].number === copyCells[k + 12].number
+                && copyCells[k + 8].number === copyCells[k].number
+                && !copyCells[k + 4].number) || (copyCells[k + 12] && copyCells[k].number === copyCells[k + 12].number
+                && copyCells[k + 4].number === copyCells[k].number && !copyCells[k + 8].number) ) {
+                    copyCells[k + 12].number *= 2
+                    copyCells[k + 8].number = copyCells[k].number
+                    copyCells[k + 4].number = copyCells[k].number = null
+                } else if ( copyCells[k + 4] && copyCells[k + 4].number === copyCells[k].number) {
+                    if (copyCells[k + 12] && !copyCells[k + 12].number && !copyCells[k + 8].number) {
+                        copyCells[k + 12].number = copyCells[k].number * 2
+                        copyCells[k].number = null
+                        copyCells[k + 4].number = null
+                    } else if (copyCells[k + 8] && !copyCells[k + 8].number) {
+                        copyCells[k + 8].number = copyCells[k].number * 2
+                        copyCells[k + 4].number = null
+                        if (copyCells[k - 4]) {
+                            copyCells[k + 4].number = copyCells[k - 4].number
+                            copyCells[k - 4].number = null
+
+                        }
+                        copyCells[k].number = null
+                    } else if (copyCells[k + 12] && copyCells[k + 8]
+                    && copyCells[k + 12].number && copyCells[k + 8].number) {
+                        copyCells[k + 4].number *= 2
+                        copyCells[k].number = null
+                    } else if (copyCells[k + 12] && copyCells[k + 8]) {
+                        copyCells[k + 8].number = copyCells[k].number * 2
+                        copyCells[k].number = null
+                    } else if (copyCells[k - 4] && copyCells[k - 8]){
+                        copyCells[k + 4].number = copyCells[k].number * 2
+                        copyCells[k].number = copyCells[k - 4].number
+                        copyCells[k - 4].number = copyCells[k - 8].number
+                        copyCells[k - 8].number = null
+                    }
+                } else if (copyCells[k + 8] && copyCells[k].number === copyCells[k + 8].number && !copyCells[k + 4].number) {
+                    if (copyCells[k + 12] && !copyCells[k + 12].number) {
+                        copyCells[k + 12].number = copyCells[k].number * 2
+                        copyCells[k + 8].number = null
+                    } else if (copyCells[k + 12]) {
+                        copyCells[k + 8].number *= 2
+                        copyCells[k].number = null
+                    } else {
+                        copyCells[k + 8].number *= 2
+                        copyCells[k].number = null
+                        if (copyCells[k - 4]) {
+                            copyCells[k].number = copyCells[k - 4].number
+                            copyCells[k - 4].number = null
+                        }
+                    }
+                    copyCells[k].number = null
+                } else if (copyCells[k + 12] && copyCells[k + 12].number === copyCells[k].number && !copyCells[k + 4].number && !copyCells[k + 8].number) {
+                    copyCells[k + 12].number *= 2
+                    copyCells[k].number = null
+                } else if (cell.y !== 3) {
+                    if (copyCells[k + 12] && !copyCells[k + 12].number && !copyCells[k + 8].number && !copyCells[k + 4].number) {
+                        copyCells[k + 12].number = copyCells[k].number
+                        copyCells[k].number = null
+                    } else if (copyCells[k + 8] && !copyCells[k + 8].number && !copyCells[k + 4].number) {
+                        copyCells[k + 8].number = copyCells[k].number
+                        copyCells[k].number = null
+                        if (copyCells[k - 4]) {
+                            copyCells[k + 4].number = copyCells[k - 4].number
+                            copyCells[k - 4].number = null
+                        }
+                    } else if (!copyCells[k + 4].number) {
+                        copyCells[k + 4].number = copyCells[k].number
+                        copyCells[k].number = null
+
+                        if (copyCells[k - 4]) {
+                            copyCells[k].number = copyCells[k - 4].number
+                            if (copyCells[k - 8]) {
+                                copyCells[k - 4].number = copyCells[k - 8].number
+                                if (copyCells[k - 12]) {
+                                    copyCells[k - 8].number = copyCells[k - 12].number
+                                    copyCells[k - 12].number = null
+                                } else {
+                                    copyCells[k - 8].number = null
+                                }
+                            } else {
+                                copyCells[k - 4].number = null
+                            }
+                        }
+                    }
+                }
+
             }
-            k--
+            k++
         })
         addNewCell(copyCells)
-        cells.reverse()
     })
     //cell move right
     useKeypress('d', () => {
